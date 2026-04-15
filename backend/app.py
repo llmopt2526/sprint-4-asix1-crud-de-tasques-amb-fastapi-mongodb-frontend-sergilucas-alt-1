@@ -12,7 +12,7 @@ import os
 from typing import Optional, List
 from dotenv import load_dotenv
 
-from fastapi import FastAPI, Body, HTTPException, status
+from fastapi import FastAPI, Body, HTTPException, status, Query
 from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ConfigDict, BaseModel, Field
@@ -143,15 +143,31 @@ async def crear_llibre(llibre: LlibreModel = Body(...)):
     return creat
 
 
-# READ - Llistar tots els llibres
-# Fa un find() sense filtres (retorna tot), converteix el cursor a llista amb to_list(1000) (màxim 1000 documents).
+# READ - Llistar tots els llibres (amb filtres opcionals)
+# Podem filtrar per categoria, estat, persona o valoració.
+# Si no s'envia cap filtre, retorna tots els llibres.
 @app.get(
     "/llibres/",
     response_description="Llista tots els llibres",
     response_model=ColeccioLlibres,
 )
-async def llistar_llibres():
-    llibres = await coleccio_llibres.find().to_list(1000)
+async def llistar_llibres(
+    categoria: Optional[str] = Query(default=None),
+    estat: Optional[str] = Query(default=None),
+    persona: Optional[str] = Query(default=None),
+    valoracio: Optional[int] = Query(default=None),
+):
+    filtre = {}
+    if categoria:
+        filtre["categoria"] = categoria
+    if estat:
+        filtre["estat"] = estat
+    if persona:
+        filtre["persona"] = persona
+    if valoracio is not None:
+        filtre["valoracio"] = valoracio
+
+    llibres = await coleccio_llibres.find(filtre).to_list(1000)
     return ColeccioLlibres(llibres=llibres)
 
 
@@ -205,3 +221,39 @@ async def eliminar_llibre(id: str):
     if resultat.deleted_count == 0:
         raise HTTPException(status_code=404, detail=f"Llibre {id} no trobat")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+# PATCH - Canviar l'estat d'un llibre (pendent / llegit)
+@app.patch(
+    "/llibres/{id}/estat",
+    response_description="Canvia l'estat d'un llibre",
+    response_model=LlibreModel,
+)
+async def canviar_estat(id: str, estat: str = Body(..., embed=True)):
+    if estat not in ("pendent", "llegit"):
+        raise HTTPException(status_code=400, detail="L'estat ha de ser 'pendent' o 'llegit'")
+
+    actualitzat = await coleccio_llibres.find_one_and_update(
+        {"_id": ObjectId(id)},
+        {"$set": {"estat": estat}},
+        return_document=ReturnDocument.AFTER,
+    )
+    if actualitzat is None:
+        raise HTTPException(status_code=404, detail=f"Llibre {id} no trobat")
+    return actualitzat
+
+
+# CREATE - Crear múltiples llibres de cop
+@app.post(
+    "/llibres/bulk",
+    response_description="Crea múltiples llibres",
+    response_model=ColeccioLlibres,
+    status_code=status.HTTP_201_CREATED,
+)
+async def crear_llibres(llibres: List[LlibreModel] = Body(...)):
+    docs = [ll.model_dump(by_alias=True, exclude=["id"]) for ll in llibres]
+    resultat = await coleccio_llibres.insert_many(docs)
+    creats = await coleccio_llibres.find(
+        {"_id": {"$in": resultat.inserted_ids}}
+    ).to_list(1000)
+    return ColeccioLlibres(llibres=creats)
