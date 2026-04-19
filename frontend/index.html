@@ -1,9 +1,96 @@
-<!doctype html>
-<html>
-  <head>
-    <title>This is the title of the webpage!</title>
-  </head>
-  <body>
-    <p>This is an example paragraph. Anything in the <strong>body</strong> tag will appear on the page, just like this <strong>p</strong> tag and its contents.</p>
-  </body>
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Llibres</title>
+
+    <!-- Framework CSS Skeleton: ens dóna estils atractius  per als  botons i formularis -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+
+    <!-- Els estils propis -->
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestor de Llibres</h1>
+
+        <!-- Formulari per afegir o editar un llibre -->
+
+        <h2 id="form-title">Afegir nou llibre</h2>
+        <form id="book-form">
+
+            <!-- Títol del llibre (obligatori) -->
+
+            <label for="titol">Títol</label>
+            <input class="u-full-width" type="text" id="titol" required placeholder="Títol del llibre">
+
+            <!-- Autor del llibre (obligatori) -->
+
+            <label for="autor">Autor</label>
+            <input class="u-full-width" type="text" id="autor" required placeholder="Autor">
+
+            <!-- Categoria del llibre -->
+
+            <label for="categoria">Categoria</label>
+            <input class="u-full-width" type="text" id="categoria" placeholder="Ex: fantasia, distopia...">
+
+	    <!-- A qui li hem assignat el llibre -->
+
+	    <label for="persona">Persona assignada</label>
+	    <input class="u-full-width" type="text" id="persona" placeholder="Nom de la persona">
+
+            <!-- Estat: pendent o llegit -->
+
+            <label for="estat">Estat</label>
+            <select class="u-full-width" id="estat">
+                <option value="pendent">Pendent</option>
+                <option value="llegit">Llegit</option>
+            </select>
+
+            <!-- Valoració de l'1 al 5 -->
+
+            <label for="valoracio">Valoració</label>
+            <select class="u-full-width" id="valoracio">
+                <option value="">Sense valoració</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+
+            <!-- Botó per enviar el formulari -->
+
+            <button class="button-primary" type="submit" id="btn-submit">Afegir llibre</button>
+
+            <!-- Botó per cancel·lar quan estem editant (Ha d'estar ocult al principi) -->
+
+            <button class="button" type="button" id="btn-cancel" style="display:none;" onclick="cancelarEdicio()">Cancel·lar</button>
+        </form>
+
+        <!-- Secció per filtrar els llibres que volem veure -->
+
+        <h2>Filtrar</h2>
+        <input class="u-full-width" type="text" id="filter-categoria" placeholder="Filtrar per categoria">
+        <select class="u-full-width" id="filter-estat">
+            <option value="">Tots els estats</option>
+            <option value="pendent">Pendent</option>
+            <option value="llegit">Llegit</option>
+        </select>
+        <button class="button-primary" onclick="carregarLlibres()">Filtrar</button>
+        <button class="button" onclick="netejarFiltres()">Netejar</button>
+
+        <!-- Aquí apareixerà la llista de llibres -->
+
+        <h2>Llibres</h2>
+        <div id="llista-llibres"></div>
+    </div>
+
+    <!-- El codi JavaScript que fa funcionar tot -->
+
+    <script src="app.js"></script>
+</body>
 </html>

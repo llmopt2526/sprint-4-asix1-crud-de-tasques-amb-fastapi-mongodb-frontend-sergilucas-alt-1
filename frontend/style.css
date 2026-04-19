@@ -1,0 +1,64 @@
+/* Estils generals de la pàgina.
+Color de fons i separació superior per no enganxar-se al navegador. */
+
+body {
+    background-color: #f5f3ef;
+    padding: 2rem 0;
+}
+
+/* Centrar el títol principal */
+
+h1 {
+    text-align: center;
+}
+
+/* Subtítols de les seccions (Afegir, Filtrar, Llibres...).
+Els separem amb una línia inferior per identificar cada bloc. */
+
+h2 {
+    margin-top: 2rem;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.3rem;
+}
+
+/* Targeta de cada llibre.
+Caixa blanca amb vora gris per diferenciar-los entre ells. */
+
+.llibre {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Separació entre el títol del llibre i la resta d'informació */
+
+.llibre h3 {
+    margin-bottom: 0.5rem;
+}
+
+/* Etiquetes d'estat (pendent / llegit).
+Colors diferents per veure ràpidament l'estat del llibre. */
+
+.badge {
+    padding: 0.2rem 0.8rem;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.badge-pendent {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.badge-llegit {
+    background: #d4edda;
+    color: #155724;
+}
+
+/* Botó d'eliminar en roig */
+
+.btn-eliminar {
+    background-color: #c0392b;
+    color: #fff;
+}
