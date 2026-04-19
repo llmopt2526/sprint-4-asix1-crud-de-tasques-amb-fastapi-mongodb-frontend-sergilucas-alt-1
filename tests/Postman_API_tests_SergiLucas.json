@@ -1,0 +1,205 @@
+{
+  "info": {
+    "_postman_id": "e8915489-e458-4bea-9dbe-80e2b8a50cd5",
+    "name": "Gestor Llibres Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53901631",
+    "_collection_link": "https://go.postman.co/collection/53901631-e8915489-e458-4bea-9dbe-80e2b8a50cd5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "1. Crear llibre",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"titol\": \"Test Llibre\",\n    \"autor\": \"Autor Test\",\n    \"categoria\": \"fantasia\",\n    \"persona\": \"Sergi\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/llibres/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "llibres",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. Llistar llibres",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/llibres/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "llibres",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. Obtenir llibre",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/llibres/69e52724319c38e6b29857a7",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "llibres",
+            "69e52724319c38e6b29857a7"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4. Actualitzar llibre",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"estat\": \"llegit\",\n    \"valoracio\": 4\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/llibres/69e52724319c38e6b29857a7",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "llibres",
+            "69e52724319c38e6b29857a7"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5. Canviar estat",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"estat\": \"pendent\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/llibres/69e52724319c38e6b29857a7/estat",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "llibres",
+            "69e52724319c38e6b29857a7",
+            "estat"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "6. Filtrar per categoria",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/llibres/?categoria=fantasia",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "llibres",
+            ""
+          ],
+          "query": [
+            {
+              "key": "categoria",
+              "value": "fantasia"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "7. Eliminar llibre",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/llibres/69e52724319c38e6b29857a7",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "llibres",
+            "69e52724319c38e6b29857a7"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "8. Llibre eliminat (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/llibres/69e52724319c38e6b29857a7",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "llibres",
+            "69e52724319c38e6b29857a7"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
