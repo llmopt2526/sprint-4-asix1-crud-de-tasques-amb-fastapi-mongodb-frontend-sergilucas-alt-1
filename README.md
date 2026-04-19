@@ -1,105 +1,87 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/ULL36zWV)
-### Estructura del projecte
+# Gestor de Llibres — Sprint 4
+**Autor:** Sergi Lucas  
+**Curs:** 2025-26 | Institut Montsià (ASIX)
 
-A diferència d’altres projectes més complexos, en aquest cas **treballareu amb una estructura simple**, igual que a l’exemple oficial. Tot el backend s’ubica en un únic fitxer (`app.py`), amb l’objectiu de centrar-se en **aprendre CRUD amb FastAPI i MongoDB** abans de **modularitzar el codi**.
+Aplicació web per gestionar una col·lecció de llibres. Permet crear, llistar, editar, eliminar i filtrar llibres per categoria, estat, persona i valoració. El backend funciona amb FastAPI i es connecta a MongoDB Atlas. El frontend consumeix l'API amb JavaScript (fetch) i utilitza Skeleton CSS.
 
-El projecte ha de mantenir una **estructura com aquesta**:
+---
 
-```
-project/
+# Funcionalitats
+- Crear, editar i eliminar llibres
+- Canviar l'estat d'un llibre (pendent / llegit)
+- Assignar valoració (1-5), categoria i persona
+- Filtrar per categoria i estat
+- Inserció massiva de llibres
+
+---
+
+# Estructura del projecte
+```text
+.
 ├── README.md
-├── backend/                # FastAPI + MongoDB
-│   ├── app.py              # Fitxer principal (tota la lògica)
-│   └── requirements.txt    # Dependències
-│
-├── frontend/           # Interfície web
-│   ├── index.html
-│   ├── style.css
-│   └── app.js
-│
-└── tests/              # Tests amb Postman
-    └── Postman_API_tests.json
+├── backend/
+│   ├── app.py                  # Servidor FastAPI amb tots els endpoints
+│   ├── .env                    # URL de connexió a MongoDB Atlas
+│   └── requirements.txt        # Dependències de Python
+├── frontend/
+│   ├── index.html              # Pàgina web
+│   ├── style.css               # Estils personalitzats
+│   └── app.js                  # JavaScript que connecta amb l'API
+└── tests/
+    └── Postman_API_tests.json  # Tests per validar l'API
 ```
-#### Fitxer `app.py`
 
-En projectes més complexos, es separaria, per exemple, la connexió a MongoDB en un fitxer a banda, anomenat `database.py`; i, els models, en `models.py`.
-En el nostre cas, tot el backend l'implementarem dins del fitxer `app.py` per simplificar.
+---
 
-Tot i això, és **molt recomanable**:
-- Afegir **grans comentaris per separar lògica** de connexió, models i endpoints.
-- **Documentar clarament cada secció** per facilitar la lectura i localització d’errors.
+# Instal·lació
 
-Un bon exemple seria aquest:
-```python
-import os
-from typing import Optional, List
-
-from fastapi import FastAPI, Body, HTTPException, status
-from fastapi.responses import Response
-from pydantic import ConfigDict, BaseModel, Field, EmailStr
-from pydantic.functional_validators import BeforeValidator
-from typing_extensions import Annotated
-
-from bson import ObjectId
-import asyncio
-from pymongo import AsyncMongoClient
-from pymongo import ReturnDocument
-
-# ------------------------------------------------------------------------ #
-#                         Inicialització de l'aplicació                    #
-# ------------------------------------------------------------------------ #
-# Creació de la instància FastAPI amb informació bàsica de l'API
-app = FastAPI(
-    title="Student Course API",
-    summary="Exemple d'API REST amb FastAPI i MongoDB per gestionar informació d'estudiants",
-)
-
-# ------------------------------------------------------------------------ #
-#                   Configuració de la connexió amb MongoDB               #
-# ------------------------------------------------------------------------ #
-# Creem el client de MongoDB utilitzant la URL de connexió emmagatzemada
-# a les variables d'entorn. Això evita incloure credencials dins del codi.
-client = AsyncMongoClient(os.environ["MONGODB_URL"])
-
-# Selecció de la base de dades i de la col·lecció
-db = client.college
-student_collection = db.get_collection("students")
-
-# Els documents de MongoDB tenen `_id` de tipus ObjectId.
-# Aquí definim PyObjectId com un string serialitzable per JSON,
-# que serà utilitzat als models Pydantic.
-PyObjectId = Annotated[str, BeforeValidator(str)]
-
-# ------------------------------------------------------------------------ #
-#                            Definició dels models                        #
-# ------------------------------------------------------------------------ #
-class StudentModel(BaseModel):
-    """
-    Model que representa un estudiant.
-    Conté tots els camps obligatoris i opcional `_id`.
-    """
-    # Clau primària de l'estudiant. 
-    # MongoDB utilitza `_id`, però l'API exposa aquest camp com `id`.
-    id: Optional[PyObjectId] = Field(alias="_id", default=None)
-    
-    # Camps obligatoris de l'estudiant
-    name: str = Field(...)
-    email: EmailStr = Field(...)
-    course: str = Field(...)
-    gpa: float = Field(..., le=4.0)
-
-    # Configuració addicional del model Pydantic
-    model_config = ConfigDict(
-        populate_by_name=True,  # Permet utilitzar alias al serialitzar/deserialitzar
-        arbitrary_types_allowed=True,  # Permet tipus personalitzats com ObjectId
-        json_schema_extra={
-            "example": {
-                "name": "Jane Doe",
-                "email": "jdoe@example.com",
-                "course": "Experiments, Science, and Fashion in Nanophotonics",
-                "gpa": 3.0,
-            }
-        },
-    )
-
+## 1. Clonar el repositori
+```bash
+git clone https://github.com/llmopt2526/sprint-4-asix1-crud-de-tasques-amb-fastapi-mongodb-frontend-sergilucas-alt-1.git
+cd sprint-4-asix1-crud-de-tasques-amb-fastapi-mongodb-frontend-sergilucas-alt-1
 ```
+
+## 2. Entorn virtual i dependències
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install fastapi uvicorn pymongo pydantic python-dotenv
+```
+
+## 3. Configurar MongoDB Atlas
+Crear un fitxer `.env` dins de `backend/` amb la URL de connexió:
+```
+MONGODB_URL=mongodb+srv://USUARI:CONTRASENYA@cluster.mongodb.net/?appName=NomCluster
+```
+Recorda autoritzar la teva IP a Atlas (Network Access).
+
+## 4. Arrencar el backend
+```bash
+uvicorn app:app --reload
+```
+L'API estarà a `http://localhost:8000`.
+
+## 5. Arrencar el frontend
+En un altre terminal:
+```bash
+cd frontend
+python3 -m http.server 5500
+```
+La pàgina estarà a `http://localhost:5500`.
+
+---
+
+# Tests amb Postman
+A `tests/Postman_API_tests.json` hi ha la col·lecció amb 8 peticions ordenades que demostren tot el CRUD:
+
+1. **POST** — Crear un llibre
+2. **GET** — Llistar tots els llibres
+3. **GET** — Obtenir un llibre per ID
+4. **PUT** — Actualitzar un llibre
+5. **PATCH** — Canviar l'estat
+6. **GET** — Filtrar per categoria
+7. **DELETE** — Eliminar un llibre
+8. **GET** — Comprovar que retorna 404
+
+La variable `{{llibre_id}}` s'assigna automàticament al fer el POST, així les altres peticions funcionen sense haver de canviar l'ID manualment.
