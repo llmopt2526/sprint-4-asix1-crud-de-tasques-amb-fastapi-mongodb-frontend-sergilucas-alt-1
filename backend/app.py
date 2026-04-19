@@ -97,7 +97,6 @@ class LlibreModel(BaseModel):
         },
     )
 
-
 class ActualitzarLlibreModel(BaseModel):
     titol: Optional[str] = None
     autor: Optional[str] = None
@@ -117,10 +116,8 @@ class ActualitzarLlibreModel(BaseModel):
         },
     )
 
-
 class ColeccioLlibres(BaseModel):
     llibres: List[LlibreModel]
-
 
 # ------------------------------------------------------------------------ #
 #                            Endpoints CRUD                                #
@@ -129,6 +126,7 @@ class ColeccioLlibres(BaseModel):
 # CREATE - Crear un llibre nou
 # Rep un llibre en JSON, l'insereix a MongoDB amb insert_one i el torna a llegir amb find_one per retornar-lo amb l'_id que MongoDB li ha assignat. 
 # Retorna codi 201 (creat).
+
 @app.post(
     "/llibres/",
     response_description="Crea un nou llibre",
@@ -142,10 +140,10 @@ async def crear_llibre(llibre: LlibreModel = Body(...)):
     creat = await coleccio_llibres.find_one({"_id": nou_llibre.inserted_id})
     return creat
 
-
 # READ - Llistar tots els llibres (amb filtres opcionals)
 # Podem filtrar per categoria, estat, persona o valoració.
 # Si no s'envia cap filtre, retorna tots els llibres.
+
 @app.get(
     "/llibres/",
     response_description="Llista tots els llibres",
@@ -170,9 +168,9 @@ async def llistar_llibres(
     llibres = await coleccio_llibres.find(filtre).to_list(1000)
     return ColeccioLlibres(llibres=llibres)
 
-
 # READ - Obtenir un llibre per ID
 # Busca el document amb find_one. Si no el troba, llança error 404.
+
 @app.get(
     "/llibres/{id}",
     response_description="Obtenir un llibre",
@@ -184,18 +182,18 @@ async def obtenir_llibre(id: str):
         raise HTTPException(status_code=404, detail=f"Llibre {id} no trobat")
     return llibre
 
-
 # UPDATE - Actualitzar un llibre
 # Rep l'id i les dades noves. Filtra els camps buits (None) per actualitzar només els que l'usuari ha enviat. 
 # Amb $set actualitza aquells camps i retorna el document actualitzat.
+
 @app.put(
     "/llibres/{id}",
     response_description="Actualitza un llibre",
     response_model=LlibreModel,
 )
 async def actualitzar_llibre(id: str, llibre: ActualitzarLlibreModel = Body(...)):
-    dades = {k: v for k, v in llibre.model_dump().items() if v is not None}
-
+    dades = {k: v for k, v in llibre.model_dump().items() if v is not None or k == "valoracio"}
+   
     if len(dades) < 1:
         raise HTTPException(status_code=400, detail="Cal almenys un camp")
 
@@ -204,14 +202,15 @@ async def actualitzar_llibre(id: str, llibre: ActualitzarLlibreModel = Body(...)
         {"$set": dades},
         return_document=ReturnDocument.AFTER,
     )
+
     if actualitzat is None:
         raise HTTPException(status_code=404, detail=f"Llibre {id} no trobat")
     return actualitzat
 
-
 # DELETE - Eliminar un llibre
 # Fa delete_one. Si deleted_count == 0, no existia i retorna 404.
 # Si s'ha eliminat correctament, retorna 204 (sense contingut).
+
 @app.delete(
     "/llibres/{id}",
     response_description="Elimina un llibre",
@@ -222,8 +221,8 @@ async def eliminar_llibre(id: str):
         raise HTTPException(status_code=404, detail=f"Llibre {id} no trobat")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-
 # PATCH - Canviar l'estat d'un llibre (pendent / llegit)
+
 @app.patch(
     "/llibres/{id}/estat",
     response_description="Canvia l'estat d'un llibre",
@@ -242,8 +241,8 @@ async def canviar_estat(id: str, estat: str = Body(..., embed=True)):
         raise HTTPException(status_code=404, detail=f"Llibre {id} no trobat")
     return actualitzat
 
-
 # CREATE - Crear múltiples llibres de cop
+
 @app.post(
     "/llibres/bulk",
     response_description="Crea múltiples llibres",

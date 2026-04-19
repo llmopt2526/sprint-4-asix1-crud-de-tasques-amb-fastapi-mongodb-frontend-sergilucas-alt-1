@@ -138,6 +138,7 @@ async function editarLlibre(id) {
     document.getElementById("form-title").textContent = "Editar llibre";
     document.getElementById("btn-submit").textContent = "Actualitzar";
     document.getElementById("btn-cancel").style.display = "inline-block";
+    window.scrollTo({ top: 0 });
 }
 
 // Si l'usuari decideix no editar, tornem el formulari com estava al principi
